@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Gym Fitness Club</string>
+    <string name="login">Inicio de Sesión</string>
+    <string name="user">Usuario</string>
+    <string name="password">Clave</string>
+    <string name="btn_login">Ingresar</string>
+    <string name="signin">Registro de Usuario</string>
+    <string name="name">Nombre</string>
+    <string name="lastname">Apellido</string>
+    <string name="date">Fecha de Nacimiento</string>
+    <string name="estatura">Estatura</string>
+    <string name="btn_signin">Registrarse</string>
+    <string name="register_ev">Registro de Evaluación</string>
+    <string name="register_date">Fecha</string>
+    <string name="peso">Peso</string>
+    <string name="result">Su IMC es:</string>
+    <string name="btn_save">Guardar Evaluación</string>
+    <string name="main">Menú</string>
+    <string name="btn_new_register">Nuevo Registro</string>
+    <string name="btn_registros">Mis Registros</string>
+    <string name="registros">Registros</string>
+    <string name="fecha_inicio">Fecha Inicio</string>
+    <string name="fecha_termino">Fecha Término</string>
+    <string name="registrarse">Registrarse</string>
+    <string name="fecha">Fecha</string>
+    <string name="imc">IMC</string>
+    <string name="delete">Eliminar</string>
+    <string name="btn_filtrar">Filtrar</string>
+</resources>
