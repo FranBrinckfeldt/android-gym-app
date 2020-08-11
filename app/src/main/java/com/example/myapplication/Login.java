@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.myapplication.utils.Validador;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class Login extends AppCompatActivity {
@@ -31,8 +32,10 @@ public class Login extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getBaseContext(), Menu.class);
-                startActivity(intent);
+                if (validar()) {
+                    Intent intent = new Intent(getBaseContext(), Menu.class);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -43,5 +46,31 @@ public class Login extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private boolean validar () {
+        String user = til_user.getEditText().getText().toString();
+        String password = til_password.getEditText().getText().toString();
+
+        boolean userValido;
+        if (Validador.requerido(user)) {
+            til_user.setError(null);
+            userValido = true;
+        } else {
+            til_user.setError("El usuario ingresado no es válido");
+            til_user.getEditText().setText("");
+            userValido = false;
+        }
+
+        boolean passwordValida;
+        if (Validador.requerido(password)) {
+            til_password.setError(null);
+            passwordValida = true;
+        } else {
+            til_password.setError("La contraseña es inválida");
+            til_password.getEditText().setText("");
+            passwordValida = false;
+        }
+        return userValido && passwordValida;
     }
 }

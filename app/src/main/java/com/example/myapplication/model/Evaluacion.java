@@ -1,19 +1,21 @@
 package com.example.myapplication.model;
 
-public class Evaluacion {
+import java.io.Serializable;
+
+public class Evaluacion implements Serializable {
 
     private int id;
     private int uid;
     private String date;
     private double peso;
-    private double imc;
+    private double estatura;
 
-    public Evaluacion(int id, int uid, String date, double peso, double imc) {
+    public Evaluacion(int id, int uid, String date, double peso, double estatura) {
         this.id = id;
         this.uid = uid;
         this.date = date;
         this.peso = peso;
-        this.imc = imc;
+        this.estatura = estatura;
     }
 
     public int getId() {
@@ -48,12 +50,20 @@ public class Evaluacion {
         this.peso = peso;
     }
 
-    public double getImc() {
-        return imc;
+    public double getEstatura() {
+        return estatura;
     }
 
-    public void setImc(double imc) {
-        this.imc = imc;
+    public void setEstatura(double estatura) {
+        this.estatura = estatura;
+    }
+
+    public double calcularIMC() {
+        try {
+            return this.peso / (this.estatura * this.estatura);
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
 }

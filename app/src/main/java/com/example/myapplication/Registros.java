@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
@@ -14,7 +15,9 @@ import android.widget.TextView;
 
 import com.example.myapplication.adapter.AdapterEvaluacion;
 import com.example.myapplication.mock.EvaluacionMock;
+import com.example.myapplication.model.Evaluacion;
 import com.example.myapplication.ui.DatePickerFragment;
+import com.example.myapplication.utils.Validador;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class Registros extends AppCompatActivity {
@@ -41,6 +44,18 @@ public class Registros extends AppCompatActivity {
 
         lv_evaluaciones.setAdapter(adapter);
 
+        lv_evaluaciones.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Evaluacion evaluacion = adapter.getItem(i);
+                Intent intent = new Intent(getBaseContext(), EditarEvaluacion.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("evaluacion", evaluacion);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+
         til_fecha_inicio.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,7 +73,9 @@ public class Registros extends AppCompatActivity {
         btn_filtrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (validar()) {
 
+                }
             }
         });
     }
@@ -72,5 +89,32 @@ public class Registros extends AppCompatActivity {
             }
         });
         datePicker.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    private boolean validar () {
+        String fecha_inicio = til_fecha_inicio.getEditText().getText().toString();
+        String fecha_termino = til_fecha_termino.getEditText().getText().toString();
+
+        boolean fechaInicioValida;
+        if (Validador.fechaVacia(fecha_inicio)) {
+            til_fecha_inicio.setError(null);
+            fechaInicioValida = true;
+        } else {
+            til_fecha_inicio.setError("La fecha es inválida");
+            til_fecha_inicio.getEditText().setText("");
+            fechaInicioValida = false;
+        }
+
+        boolean fechaTerminoValida;
+        if (Validador.fechaVacia(fecha_termino)) {
+            til_fecha_termino.setError(null);
+            fechaTerminoValida = true;
+        } else {
+            til_fecha_termino.setError("La fecha es inválida");
+            til_fecha_termino.getEditText().setText("");
+            fechaTerminoValida = false;
+        }
+
+        return fechaInicioValida && fechaTerminoValida;
     }
 }

@@ -11,26 +11,43 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.myapplication.model.Evaluacion;
 import com.example.myapplication.ui.DatePickerFragment;
 import com.example.myapplication.utils.Validador;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class RegistroEvaluacion extends AppCompatActivity {
+public class EditarEvaluacion extends AppCompatActivity {
 
-    TextView tv_imc;
+    TextView tv_app_name, tv_editar_ev, tv_imc;
     TextInputLayout til_register_date, til_peso;
-    Button btn_save;
+    Button btn_editar, btn_eliminar;
+    Evaluacion evaluacion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registro_evaluacion);
+        setContentView(R.layout.activity_editar_evaluacion);
 
+        tv_app_name = findViewById(R.id.tv_app_name);
+        tv_editar_ev = findViewById(R.id.tv_editar_ev);
         tv_imc = findViewById(R.id.tv_imc);
         til_register_date = findViewById(R.id.til_register_date);
         til_peso = findViewById(R.id.til_peso);
-        btn_save = findViewById(R.id.btn_save);
+        btn_editar = findViewById(R.id.btn_editar);
+        btn_eliminar = findViewById(R.id.btn_eliminar);
+
+        Bundle bundle = getIntent().getExtras();
+        evaluacion = null;
+
+        if (bundle != null) {
+            evaluacion = (Evaluacion) bundle.getSerializable("evaluacion");
+        } else {
+            Intent intent = new Intent(getBaseContext(), Registros.class);
+            startActivity(intent);
+            Toast.makeText(getBaseContext(), getString(R.string.mensaje_error_bundle), Toast.LENGTH_LONG).show();
+        }
 
         til_peso.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
@@ -56,6 +73,11 @@ public class RegistroEvaluacion extends AppCompatActivity {
             }
         });
 
+        til_register_date.getEditText().setText(evaluacion.getDate());
+        til_peso.getEditText().setText(Double.toString(evaluacion.getPeso()));
+
+        tv_editar_ev.setText(getString(R.string.editar_ev, evaluacion.getId()));
+
         til_register_date.getEditText().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,7 +85,17 @@ public class RegistroEvaluacion extends AppCompatActivity {
             }
         });
 
-        btn_save.setOnClickListener(new View.OnClickListener() {
+        btn_editar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (validar()) {
+                    Intent intent = new Intent(getBaseContext(), Registros.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        btn_eliminar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (validar()) {
@@ -111,5 +143,4 @@ public class RegistroEvaluacion extends AppCompatActivity {
 
         return fechaValida && pesoValido;
     }
-
 }

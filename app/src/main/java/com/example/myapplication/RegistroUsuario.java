@@ -11,6 +11,7 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 
 import com.example.myapplication.ui.DatePickerFragment;
+import com.example.myapplication.utils.Validador;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class RegistroUsuario extends AppCompatActivity {
@@ -44,8 +45,10 @@ public class RegistroUsuario extends AppCompatActivity {
         btn_signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getBaseContext(), Login.class);
-                startActivity(intent);
+                if (validar()) {
+                    Intent intent = new Intent(getBaseContext(), Login.class);
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -60,4 +63,76 @@ public class RegistroUsuario extends AppCompatActivity {
         });
         datePicker.show(getSupportFragmentManager(), "datePicker");
     }
+
+    private boolean validar () {
+        String user = til_user.getEditText().getText().toString();
+        String name = til_name.getEditText().getText().toString();
+        String lastname = til_lastname.getEditText().getText().toString();
+        String date = til_date.getEditText().getText().toString();
+        String estatura = til_estatura.getEditText().getText().toString();
+        String password = til_password.getEditText().getText().toString();
+
+        boolean userValido;
+        if (Validador.requerido(user)) {
+            til_user.setError(null);
+            userValido = true;
+        } else {
+            til_user.setError("El usuario ingresado no es válido");
+            til_user.getEditText().setText("");
+            userValido = false;
+        }
+
+        boolean nameValido;
+        if (Validador.requerido(name)) {
+            til_name.setError(null);
+            nameValido = true;
+        } else {
+            til_name.setError("El nombre ingresado no es válido");
+            til_name.getEditText().setText("");
+            nameValido = false;
+        }
+
+        boolean lastnameValido;
+        if (Validador.requerido(lastname)) {
+            til_lastname.setError(null);
+            lastnameValido = true;
+        } else {
+            til_lastname.setError("El apellido ingresado no es válido");
+            til_lastname.getEditText().setText("");
+            lastnameValido = false;
+        }
+
+        boolean dateValida;
+        if (Validador.fecha(date)) {
+            til_date.setError(null);
+            dateValida = true;
+        } else {
+            til_date.setError("La fecha es inválida");
+            til_date.getEditText().setText("");
+            dateValida = false;
+        }
+
+        boolean estaturaValida;
+        if (Validador.requerido(estatura) && Validador.mayorCero(estatura)) {
+            til_estatura.setError(null);
+            estaturaValida = true;
+        } else {
+            til_estatura.setError("La estatura ingresada no es válida");
+            til_estatura.getEditText().setText("");
+            estaturaValida = false;
+        }
+
+        boolean passwordValida;
+        if (Validador.requerido(password)) {
+            til_password.setError(null);
+            passwordValida = true;
+        } else {
+            til_password.setError("La contraseña es inválida");
+            til_password.getEditText().setText("");
+            passwordValida = false;
+        }
+
+        return userValido && nameValido && lastnameValido && dateValida && estaturaValida && passwordValida;
+    }
+
 }

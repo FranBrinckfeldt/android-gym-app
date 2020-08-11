@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegistroEvaluacion">
+    tools:context=".EditarEvaluacion">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -26,11 +26,11 @@
                 android:textSize="24sp" />
 
             <TextView
-                android:id="@+id/tv_register_ev"
+                android:id="@+id/tv_editar_ev"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="@string/register_ev"
+                android:text="@string/editar_ev"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -83,11 +83,18 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/btn_save"
+                android:id="@+id/btn_editar"
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/btn_save" />
+                android:text="@string/btn_editar" />
+
+            <Button
+                android:id="@+id/btn_eliminar"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_eliminar" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
