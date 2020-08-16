@@ -26,10 +26,12 @@
     <string name="imc">IMC</string>
     <string name="delete">Eliminar</string>
     <string name="btn_filtrar">Filtrar</string>
+    <string name="btn_eliminar_filtro">Eliminar Filtro</string>
     <string name="id">ID</string>
     <string name="editar_ev">Editando la evaluación de ID: %1$d</string>
     <string name="btn_editar">Editar</string>
     <string name="btn_eliminar">Eliminar</string>
     <string name="mensaje_error_bundle">Hubo un error al recuperar la evaluación</string>
     <string name="ingrese_peso">Ingrese un peso</string>
+    <string name="press_exit">Presiona dos veces para salir</string>
 </resources>

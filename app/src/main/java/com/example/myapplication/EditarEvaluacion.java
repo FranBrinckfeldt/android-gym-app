@@ -13,6 +13,7 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.dao.EvaluacionDAO;
 import com.example.myapplication.model.Evaluacion;
 import com.example.myapplication.ui.DatePickerFragment;
 import com.example.myapplication.utils.Validador;
@@ -24,6 +25,7 @@ public class EditarEvaluacion extends AppCompatActivity {
     TextInputLayout til_register_date, til_peso;
     Button btn_editar, btn_eliminar;
     Evaluacion evaluacion;
+    EvaluacionDAO dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,7 @@ public class EditarEvaluacion extends AppCompatActivity {
         til_peso = findViewById(R.id.til_peso);
         btn_editar = findViewById(R.id.btn_editar);
         btn_eliminar = findViewById(R.id.btn_eliminar);
+        dao = new EvaluacionDAO(this);
 
         Bundle bundle = getIntent().getExtras();
         evaluacion = null;
@@ -89,8 +92,19 @@ public class EditarEvaluacion extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (validar()) {
-                    Intent intent = new Intent(getBaseContext(), Registros.class);
-                    startActivity(intent);
+                    String register_date = til_register_date.getEditText().getText().toString();
+                    String peso = til_peso.getEditText().getText().toString();
+                    // TODO: Estatura debe venir desde el usuario.
+                    Evaluacion evaluacionEditada = new Evaluacion(evaluacion.getId(), 0, register_date, Double.parseDouble(peso), 1.60);
+                    if(dao.update(evaluacionEditada)){
+                        Toast.makeText(view.getContext(), "Se editó evaluación", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getBaseContext(), Registros.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(view.getContext(), "Hubo un error al editar la evaluación", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -99,8 +113,15 @@ public class EditarEvaluacion extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (validar()) {
-                    Intent intent = new Intent(getBaseContext(), Registros.class);
-                    startActivity(intent);
+                    if(dao.deleteById(evaluacion.getId())) {
+                        Toast.makeText(view.getContext(), "Se eliminó evaluación", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getBaseContext(), Registros.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(view.getContext(), "Hubo un error al eliminar la evaluación", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

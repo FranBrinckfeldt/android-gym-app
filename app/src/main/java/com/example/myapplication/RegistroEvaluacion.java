@@ -11,7 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.myapplication.dao.EvaluacionDAO;
+import com.example.myapplication.model.Evaluacion;
 import com.example.myapplication.ui.DatePickerFragment;
 import com.example.myapplication.utils.Validador;
 import com.google.android.material.textfield.TextInputLayout;
@@ -21,6 +24,7 @@ public class RegistroEvaluacion extends AppCompatActivity {
     TextView tv_imc;
     TextInputLayout til_register_date, til_peso;
     Button btn_save;
+    EvaluacionDAO dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +71,21 @@ public class RegistroEvaluacion extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (validar()) {
-                    Intent intent = new Intent(getBaseContext(), Registros.class);
-                    startActivity(intent);
+                    dao = new EvaluacionDAO(view.getContext());
+                    String register_date = til_register_date.getEditText().getText().toString();
+                    String peso = til_peso.getEditText().getText().toString();
+                    // TODO: Estatura debe venir desde el usuario.
+                    Evaluacion evaluacion = new Evaluacion(0, 0, register_date, Double.parseDouble(peso), 1.60);
+                    if(dao.insert(evaluacion)) {
+                        Intent intent = new Intent(getBaseContext(), Registros.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                        Toast.makeText(view.getContext(), "Se insertó evaluación", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(view.getContext(), "Hubo un error al insertar en la base de datos", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
             }
         });

@@ -17,6 +17,10 @@ public class EvaluacionDAO implements iCRUD<Evaluacion> {
     private SqliteHelper admin;
     private final String table = "evaluations";
 
+    public EvaluacionDAO(Context context) {
+        this.context = context;
+    }
+
     @Override
     public boolean insert(Evaluacion evaluacion) {
         admin = new SqliteHelper(context, Constantes.DATABASE, null, 1);
@@ -26,8 +30,9 @@ public class EvaluacionDAO implements iCRUD<Evaluacion> {
         registry.put("date", evaluacion.getDate());
         registry.put("height", evaluacion.getEstatura());
         registry.put("weight", evaluacion.getPeso());
+        boolean success = db.insert(table, null, registry) != -1;
         db.close();
-        return db.insert(table, null, registry) != -1;
+        return success;
     }
 
     @Override
@@ -100,6 +105,8 @@ public class EvaluacionDAO implements iCRUD<Evaluacion> {
     public boolean deleteById(int id) {
         admin = new SqliteHelper(context, Constantes.DATABASE, null, 1);
         SQLiteDatabase db = admin.getWritableDatabase();
-        return db.delete(table, "id = ?", new String[] {Integer.toString(id)}) > 0;
+        boolean success = db.delete(table, "id = ?", new String[] {Integer.toString(id)}) > 0;
+        db.close();
+        return success;
     }
 }

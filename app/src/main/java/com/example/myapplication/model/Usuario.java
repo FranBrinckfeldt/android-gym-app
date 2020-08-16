@@ -8,13 +8,15 @@ public class Usuario {
     private String apellido;
     private String fechaNacimiento;
     private String clave;
+    private double estatura;
 
-    public Usuario(int id, String usuario, String nombre, String apellido, String fechaNacimiento) {
+    public Usuario(int id, String usuario, String nombre, String apellido, String fechaNacimiento, double estatura) {
         this.id = id;
         this.usuario = usuario;
         this.nombre = nombre;
         this.apellido = apellido;
         this.fechaNacimiento = fechaNacimiento;
+        this.estatura = estatura;
     }
 
     public Usuario withClave(String clave) {
@@ -68,5 +70,13 @@ public class Usuario {
 
     public void setClave(String clave) {
         this.clave = clave;
+    }
+
+    public double getEstatura() {
+        return estatura;
+    }
+
+    public void setEstatura(double estatura) {
+        this.estatura = estatura;
     }
 }

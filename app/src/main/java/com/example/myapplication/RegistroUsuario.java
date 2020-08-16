@@ -48,6 +48,7 @@ public class RegistroUsuario extends AppCompatActivity {
                 if (validar()) {
                     Intent intent = new Intent(getBaseContext(), Login.class);
                     startActivity(intent);
+                    finish();
                 }
             }
         });

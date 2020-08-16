@@ -35,6 +35,7 @@ public class Login extends AppCompatActivity {
                 if (validar()) {
                     Intent intent = new Intent(getBaseContext(), Menu.class);
                     startActivity(intent);
+                    finish();
                 }
             }
         });

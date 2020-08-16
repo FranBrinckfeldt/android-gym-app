@@ -14,11 +14,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.myapplication.adapter.AdapterEvaluacion;
+import com.example.myapplication.dao.EvaluacionDAO;
 import com.example.myapplication.mock.EvaluacionMock;
 import com.example.myapplication.model.Evaluacion;
 import com.example.myapplication.ui.DatePickerFragment;
 import com.example.myapplication.utils.Validador;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.ArrayList;
 
 public class Registros extends AppCompatActivity {
 
@@ -26,21 +29,37 @@ public class Registros extends AppCompatActivity {
     TextInputLayout til_fecha_inicio, til_fecha_termino;
     ListView lv_evaluaciones;
     AdapterEvaluacion adapter;
-    Button btn_filtrar;
+    Button btn_filtrar, btn_eliminar_filtro;
+    EvaluacionDAO dao;
+    String[] fechas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registros);
 
+        fechas = new String[2];
         tv_app_name = findViewById(R.id.tv_app_name);
         tv_registros = findViewById(R.id.tv_registros);
         til_fecha_inicio = findViewById(R.id.til_fecha_inicio);
         til_fecha_termino = findViewById(R.id.til_fecha_termino);
         btn_filtrar = findViewById(R.id.btn_filtrar);
+        btn_eliminar_filtro = findViewById(R.id.btn_eliminar_filtro);
         lv_evaluaciones = findViewById(R.id.lv_evaluaciones);
 
-        adapter = new AdapterEvaluacion(getBaseContext(), EvaluacionMock.getAll());
+        dao = new EvaluacionDAO(this);
+        Bundle receivedObjects = getIntent().getExtras();
+
+        if(receivedObjects != null) {
+            fechas = receivedObjects.getStringArray("fechas");
+            adapter = new AdapterEvaluacion(getBaseContext(), dao.findAllByDate(fechas));
+            til_fecha_inicio.getEditText().setText(fechas[0]);
+            til_fecha_termino.getEditText().setText(fechas[1]);
+            btn_eliminar_filtro.setVisibility(View.VISIBLE);
+        } else {
+            adapter = new AdapterEvaluacion(getBaseContext(), dao.findAll());
+            btn_eliminar_filtro.setVisibility(View.GONE);
+        }
 
         lv_evaluaciones.setAdapter(adapter);
 
@@ -74,8 +93,24 @@ public class Registros extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (validar()) {
-
+                    fechas[0] = til_fecha_inicio.getEditText().getText().toString();
+                    fechas[1] = til_fecha_termino.getEditText().getText().toString();
+                    Intent intent = new Intent(view.getContext(), Registros.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putStringArray("fechas", fechas);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    finish();
                 }
+            }
+        });
+
+        btn_eliminar_filtro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), Registros.class);
+                startActivity(intent);
+                finish();
             }
         });
     }
