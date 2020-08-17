@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.myapplication.dao.UsuarioDAO;
+import com.example.myapplication.model.Usuario;
 import com.example.myapplication.utils.Validador;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -16,6 +19,8 @@ public class Login extends AppCompatActivity {
     TextView tv_app_name, tv_login, tv_registrarse;
     TextInputLayout til_user, til_password;
     Button btn_login;
+    UsuarioDAO dao;
+    Usuario usuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +38,18 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (validar()) {
-                    Intent intent = new Intent(getBaseContext(), Menu.class);
-                    startActivity(intent);
-                    finish();
+                    String user = til_user.getEditText().getText().toString();
+                    String password = til_password.getEditText().getText().toString();
+                    dao = new UsuarioDAO(view.getContext());
+                    usuario = dao.login(user, password);
+                    if (usuario != null) {
+                        Intent intent = new Intent(getBaseContext(), Menu.class);
+                        startActivity(intent);
+                        finish();
+                        Toast.makeText(view.getContext(), "Bienvenido/a " + usuario.getNombre(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(view.getContext(), "Usuario o contraseña incorrectos ", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

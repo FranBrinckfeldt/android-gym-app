@@ -32,6 +32,7 @@ public class UsuarioDAO implements iCRUD<Usuario> {
         registry.put("lastname", usuario.getApellido());
         registry.put("birth", usuario.getFechaNacimiento());
         registry.put("height", usuario.getEstatura());
+        registry.put("password", usuario.getClave());
         boolean success = db.insert(table, null, registry) != -1;
         db.close();
         return success;

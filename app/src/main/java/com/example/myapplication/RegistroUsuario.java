@@ -9,7 +9,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.myapplication.dao.EvaluacionDAO;
+import com.example.myapplication.dao.UsuarioDAO;
+import com.example.myapplication.model.Usuario;
 import com.example.myapplication.ui.DatePickerFragment;
 import com.example.myapplication.utils.Validador;
 import com.google.android.material.textfield.TextInputLayout;
@@ -19,6 +23,7 @@ public class RegistroUsuario extends AppCompatActivity {
     TextView tv_app_name, tv_signin;
     TextInputLayout til_user, til_name, til_lastname, til_date, til_estatura, til_password;
     Button btn_signin;
+    UsuarioDAO dao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +51,23 @@ public class RegistroUsuario extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (validar()) {
-                    Intent intent = new Intent(getBaseContext(), Login.class);
-                    startActivity(intent);
-                    finish();
+                    dao = new UsuarioDAO(view.getContext());
+                    String user = til_user.getEditText().getText().toString();
+                    String name = til_name.getEditText().getText().toString();
+                    String lastname = til_lastname.getEditText().getText().toString();
+                    String date = til_date.getEditText().getText().toString();
+                    String estatura = til_estatura.getEditText().getText().toString();
+                    String password = til_password.getEditText().getText().toString();
+                    Usuario usuario = new Usuario(0, user, name, lastname, date, Double.parseDouble(estatura)).withClave(password);
+                    if (dao.insert(usuario)) {
+                        Intent intent = new Intent(getBaseContext(), Login.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        finish();
+                        Toast.makeText(view.getContext(), "Se insertó el usuario", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(view.getContext(), "Hubo un error al insertar en la base de datos", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });

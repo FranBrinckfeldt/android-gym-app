@@ -85,7 +85,6 @@ public class RegistroEvaluacion extends AppCompatActivity {
                     } else {
                         Toast.makeText(view.getContext(), "Hubo un error al insertar en la base de datos", Toast.LENGTH_SHORT).show();
                     }
-
                 }
             }
         });
