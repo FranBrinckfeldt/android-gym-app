@@ -3,7 +3,9 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -26,11 +28,16 @@ public class EditarEvaluacion extends AppCompatActivity {
     Button btn_editar, btn_eliminar;
     Evaluacion evaluacion;
     EvaluacionDAO dao;
+    SharedPreferences preferences;
+    double estatura;
+    int uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editar_evaluacion);
+
+        preferences = getSharedPreferences("usuario", Context.MODE_PRIVATE);
 
         tv_app_name = findViewById(R.id.tv_app_name);
         tv_editar_ev = findViewById(R.id.tv_editar_ev);
@@ -40,6 +47,9 @@ public class EditarEvaluacion extends AppCompatActivity {
         btn_editar = findViewById(R.id.btn_editar);
         btn_eliminar = findViewById(R.id.btn_eliminar);
         dao = new EvaluacionDAO(this);
+
+        estatura = Double.parseDouble(preferences.getString("height", "1.0"));
+        uid = preferences.getInt("id", 0);
 
         Bundle bundle = getIntent().getExtras();
         evaluacion = null;
@@ -68,8 +78,7 @@ public class EditarEvaluacion extends AppCompatActivity {
                 String strPeso = til_peso.getEditText().getText().toString();
                 if (!strPeso.isEmpty()) {
                     double peso = Double.parseDouble(strPeso);
-                    // TODO: Modificar estatura cuando se tenga la base de datos.
-                    tv_imc.setText(String.format("%.1f", peso / (1.60 * 1.60)));
+                    tv_imc.setText(String.format("%.1f", peso / (estatura * estatura)));
                 } else {
                     tv_imc.setText(getString(R.string.ingrese_peso));
                 }
@@ -94,8 +103,7 @@ public class EditarEvaluacion extends AppCompatActivity {
                 if (validar()) {
                     String register_date = til_register_date.getEditText().getText().toString();
                     String peso = til_peso.getEditText().getText().toString();
-                    // TODO: Estatura debe venir desde el usuario.
-                    Evaluacion evaluacionEditada = new Evaluacion(evaluacion.getId(), 0, register_date, Double.parseDouble(peso), 1.60);
+                    Evaluacion evaluacionEditada = new Evaluacion(evaluacion.getId(), 0, register_date, Double.parseDouble(peso), estatura);
                     if(dao.update(evaluacionEditada)){
                         Toast.makeText(view.getContext(), "Se editó evaluación", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getBaseContext(), Registros.class);

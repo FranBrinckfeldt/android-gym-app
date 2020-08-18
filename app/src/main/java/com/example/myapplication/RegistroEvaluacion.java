@@ -3,7 +3,9 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,16 +27,24 @@ public class RegistroEvaluacion extends AppCompatActivity {
     TextInputLayout til_register_date, til_peso;
     Button btn_save;
     EvaluacionDAO dao;
+    SharedPreferences preferences;
+    double estatura;
+    int uid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro_evaluacion);
 
+        preferences = getSharedPreferences("usuario", Context.MODE_PRIVATE);
+
         tv_imc = findViewById(R.id.tv_imc);
         til_register_date = findViewById(R.id.til_register_date);
         til_peso = findViewById(R.id.til_peso);
         btn_save = findViewById(R.id.btn_save);
+
+        estatura = Double.parseDouble(preferences.getString("height", "1.0"));
+        uid = preferences.getInt("id", 0);
 
         til_peso.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
@@ -52,8 +62,7 @@ public class RegistroEvaluacion extends AppCompatActivity {
                 String strPeso = til_peso.getEditText().getText().toString();
                 if (!strPeso.isEmpty()) {
                     double peso = Double.parseDouble(strPeso);
-                    // TODO: Modificar estatura cuando se tenga la base de datos.
-                    tv_imc.setText(String.format("%.1f", peso / (1.60 * 1.60)));
+                    tv_imc.setText(String.format("%.1f", peso / (estatura * estatura)));
                 } else {
                     tv_imc.setText(getString(R.string.ingrese_peso));
                 }
@@ -74,8 +83,7 @@ public class RegistroEvaluacion extends AppCompatActivity {
                     dao = new EvaluacionDAO(view.getContext());
                     String register_date = til_register_date.getEditText().getText().toString();
                     String peso = til_peso.getEditText().getText().toString();
-                    // TODO: Estatura debe venir desde el usuario.
-                    Evaluacion evaluacion = new Evaluacion(0, 0, register_date, Double.parseDouble(peso), 1.60);
+                    Evaluacion evaluacion = new Evaluacion(0, uid, register_date, Double.parseDouble(peso), estatura);
                     if(dao.insert(evaluacion)) {
                         Intent intent = new Intent(getBaseContext(), Registros.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

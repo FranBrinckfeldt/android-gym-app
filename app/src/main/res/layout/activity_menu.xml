@@ -47,6 +47,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/btn_registros" />
+
+            <TextView
+                android:id="@+id/tv_cerrar_sesion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="128dp"
+                android:gravity="center"
+                android:text="@string/cerrar_sesion"
+                android:textColor="#F44336" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,7 +2,9 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +23,7 @@ public class Login extends AppCompatActivity {
     Button btn_login;
     UsuarioDAO dao;
     Usuario usuario;
+    SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,14 @@ public class Login extends AppCompatActivity {
         btn_login = findViewById(R.id.btn_login);
         tv_registrarse = findViewById(R.id.tv_registrarse);
 
+        preferences = getSharedPreferences("usuario", Context.MODE_PRIVATE);
+
+        if (preferences.contains("username")) {
+            Intent intent = new Intent(getBaseContext(), Menu.class);
+            startActivity(intent);
+            finish();
+        }
+
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -43,6 +54,13 @@ public class Login extends AppCompatActivity {
                     dao = new UsuarioDAO(view.getContext());
                     usuario = dao.login(user, password);
                     if (usuario != null) {
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putInt("id", usuario.getId());
+                        editor.putString("username", usuario.getUsuario());
+                        editor.putString("firstname", usuario.getNombre());
+                        editor.putString("lastname", usuario.getApellido());
+                        editor.putString("height", Double.toString(usuario.getEstatura()));
+                        editor.commit();
                         Intent intent = new Intent(getBaseContext(), Menu.class);
                         startActivity(intent);
                         finish();

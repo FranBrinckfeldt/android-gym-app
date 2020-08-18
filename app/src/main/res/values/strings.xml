@@ -33,5 +33,6 @@
     <string name="btn_eliminar">Eliminar</string>
     <string name="mensaje_error_bundle">Hubo un error al recuperar la evaluación</string>
     <string name="ingrese_peso">Ingrese un peso</string>
+    <string name="cerrar_sesion">Cerrar Sesión</string>
     <string name="press_exit">Presiona dos veces para salir</string>
 </resources>

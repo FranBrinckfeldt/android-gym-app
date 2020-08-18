@@ -131,7 +131,7 @@ public class Registros extends AppCompatActivity {
         String fecha_termino = til_fecha_termino.getEditText().getText().toString();
 
         boolean fechaInicioValida;
-        if (Validador.fechaVacia(fecha_inicio)) {
+        if (Validador.fechaVacia(fecha_inicio) && Validador.requerido(fecha_inicio)) {
             til_fecha_inicio.setError(null);
             fechaInicioValida = true;
         } else {
@@ -141,7 +141,7 @@ public class Registros extends AppCompatActivity {
         }
 
         boolean fechaTerminoValida;
-        if (Validador.fechaVacia(fecha_termino)) {
+        if (Validador.fechaVacia(fecha_termino) && Validador.requerido(fecha_termino)) {
             til_fecha_termino.setError(null);
             fechaTerminoValida = true;
         } else {

@@ -2,6 +2,7 @@ package com.example.myapplication.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -16,9 +17,11 @@ public class EvaluacionDAO implements iCRUD<Evaluacion> {
     private Context context;
     private SqliteHelper admin;
     private final String table = "evaluations";
+    private SharedPreferences preferences;
 
     public EvaluacionDAO(Context context) {
         this.context = context;
+        this.preferences = context.getSharedPreferences("usuario", Context.MODE_PRIVATE);
     }
 
     @Override
@@ -39,7 +42,7 @@ public class EvaluacionDAO implements iCRUD<Evaluacion> {
     public ArrayList<Evaluacion> findAll() {
         admin = new SqliteHelper(context, Constantes.DATABASE, null, 1);
         SQLiteDatabase db = admin.getReadableDatabase();
-        Cursor rows = db.rawQuery("SELECT id, user_id, date, height, weight FROM evaluations WHERE user_id = ? ORDER BY date ASC", new String[] {Integer.toString(0)});
+        Cursor rows = db.rawQuery("SELECT id, user_id, date, height, weight FROM evaluations WHERE user_id = ? ORDER BY date ASC", new String[] {Integer.toString(this.preferences.getInt("id", 0))});
         ArrayList<Evaluacion> evaluaciones = new ArrayList<>();
         while(rows.moveToNext()) {
             int id = Integer.parseInt(rows.getString(0));
@@ -56,7 +59,7 @@ public class EvaluacionDAO implements iCRUD<Evaluacion> {
     public ArrayList<Evaluacion> findAllByDate(String[] dates) {
         admin = new SqliteHelper(context, Constantes.DATABASE, null, 1);
         SQLiteDatabase db = admin.getReadableDatabase();
-        Cursor rows = db.rawQuery("SELECT id, user_id, date, height, weight FROM evaluations WHERE user_id = ? AND date BETWEEN ? AND ? ORDER BY date ASC", new String[] {Integer.toString(0), dates[0], dates[1]});
+        Cursor rows = db.rawQuery("SELECT id, user_id, date, height, weight FROM evaluations WHERE user_id = ? AND date BETWEEN ? AND ? ORDER BY date ASC", new String[] {Integer.toString(this.preferences.getInt("id", 0)), dates[0], dates[1]});
         ArrayList<Evaluacion> evaluaciones = new ArrayList<>();
         while(rows.moveToNext()) {
             int id = Integer.parseInt(rows.getString(0));
