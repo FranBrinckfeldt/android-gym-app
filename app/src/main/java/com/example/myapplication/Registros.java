@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.example.myapplication.adapter.AdapterEvaluacion;
 import com.example.myapplication.dao.EvaluacionDAO;
-import com.example.myapplication.mock.EvaluacionMock;
 import com.example.myapplication.model.Evaluacion;
 import com.example.myapplication.ui.DatePickerFragment;
 import com.example.myapplication.utils.Validador;

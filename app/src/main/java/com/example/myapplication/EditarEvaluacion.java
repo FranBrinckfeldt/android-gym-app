@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.myapplication.dao.EvaluacionDAO;
 import com.example.myapplication.model.Evaluacion;
 import com.example.myapplication.ui.DatePickerFragment;
+import com.example.myapplication.utils.Imc;
 import com.example.myapplication.utils.Validador;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -29,7 +30,7 @@ public class EditarEvaluacion extends AppCompatActivity {
     Evaluacion evaluacion;
     EvaluacionDAO dao;
     SharedPreferences preferences;
-    double estatura;
+    double estatura, imc;
     int uid;
 
     @Override
@@ -78,7 +79,8 @@ public class EditarEvaluacion extends AppCompatActivity {
                 String strPeso = til_peso.getEditText().getText().toString();
                 if (!strPeso.isEmpty()) {
                     double peso = Double.parseDouble(strPeso);
-                    tv_imc.setText(String.format("%.1f", peso / (estatura * estatura)));
+                    imc = Imc.calcular(peso, estatura);
+                    tv_imc.setText(String.format("%.1f", imc));
                 } else {
                     tv_imc.setText(getString(R.string.ingrese_peso));
                 }
@@ -103,7 +105,7 @@ public class EditarEvaluacion extends AppCompatActivity {
                 if (validar()) {
                     String register_date = til_register_date.getEditText().getText().toString();
                     String peso = til_peso.getEditText().getText().toString();
-                    Evaluacion evaluacionEditada = new Evaluacion(evaluacion.getId(), 0, register_date, Double.parseDouble(peso), estatura);
+                    Evaluacion evaluacionEditada = new Evaluacion(evaluacion.getId(), 0, register_date, Double.parseDouble(peso), estatura, imc);
                     if(dao.update(evaluacionEditada)){
                         Toast.makeText(view.getContext(), "Se editó evaluación", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getBaseContext(), Registros.class);

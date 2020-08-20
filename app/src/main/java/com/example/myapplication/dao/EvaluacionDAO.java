@@ -33,6 +33,7 @@ public class EvaluacionDAO implements iCRUD<Evaluacion> {
         registry.put("date", evaluacion.getDate());
         registry.put("height", evaluacion.getEstatura());
         registry.put("weight", evaluacion.getPeso());
+        registry.put("imc", evaluacion.getImc());
         boolean success = db.insert(table, null, registry) != -1;
         db.close();
         return success;
@@ -42,7 +43,7 @@ public class EvaluacionDAO implements iCRUD<Evaluacion> {
     public ArrayList<Evaluacion> findAll() {
         admin = new SqliteHelper(context, Constantes.DATABASE, null, 1);
         SQLiteDatabase db = admin.getReadableDatabase();
-        Cursor rows = db.rawQuery("SELECT id, user_id, date, height, weight FROM evaluations WHERE user_id = ? ORDER BY date ASC", new String[] {Integer.toString(this.preferences.getInt("id", 0))});
+        Cursor rows = db.rawQuery("SELECT id, user_id, date, height, weight, imc FROM evaluations WHERE user_id = ? ORDER BY date ASC", new String[] {Integer.toString(this.preferences.getInt("id", 0))});
         ArrayList<Evaluacion> evaluaciones = new ArrayList<>();
         while(rows.moveToNext()) {
             int id = Integer.parseInt(rows.getString(0));
@@ -50,7 +51,8 @@ public class EvaluacionDAO implements iCRUD<Evaluacion> {
             String date = rows.getString(2);
             double estatura = Double.parseDouble(rows.getString(3));
             double peso = Double.parseDouble(rows.getString(4));
-            evaluaciones.add(new Evaluacion(id, uid, date, peso, estatura));
+            double imc = Double.parseDouble(rows.getString(5));
+            evaluaciones.add(new Evaluacion(id, uid, date, peso, estatura, imc));
         }
         db.close();
         return evaluaciones;
@@ -59,7 +61,7 @@ public class EvaluacionDAO implements iCRUD<Evaluacion> {
     public ArrayList<Evaluacion> findAllByDate(String[] dates) {
         admin = new SqliteHelper(context, Constantes.DATABASE, null, 1);
         SQLiteDatabase db = admin.getReadableDatabase();
-        Cursor rows = db.rawQuery("SELECT id, user_id, date, height, weight FROM evaluations WHERE user_id = ? AND date BETWEEN ? AND ? ORDER BY date ASC", new String[] {Integer.toString(this.preferences.getInt("id", 0)), dates[0], dates[1]});
+        Cursor rows = db.rawQuery("SELECT id, user_id, date, height, weight, imc FROM evaluations WHERE user_id = ? AND date BETWEEN ? AND ? ORDER BY date ASC", new String[] {Integer.toString(this.preferences.getInt("id", 0)), dates[0], dates[1]});
         ArrayList<Evaluacion> evaluaciones = new ArrayList<>();
         while(rows.moveToNext()) {
             int id = Integer.parseInt(rows.getString(0));
@@ -67,7 +69,8 @@ public class EvaluacionDAO implements iCRUD<Evaluacion> {
             String date = rows.getString(2);
             double estatura = Double.parseDouble(rows.getString(3));
             double peso = Double.parseDouble(rows.getString(4));
-            evaluaciones.add(new Evaluacion(id, uid, date, peso, estatura));
+            double imc = Double.parseDouble(rows.getString(5));
+            evaluaciones.add(new Evaluacion(id, uid, date, peso, estatura, imc));
         }
         db.close();
         return evaluaciones;
@@ -77,14 +80,15 @@ public class EvaluacionDAO implements iCRUD<Evaluacion> {
     public Evaluacion findById(int id) {
         admin = new SqliteHelper(context, Constantes.DATABASE, null, 1);
         SQLiteDatabase db = admin.getReadableDatabase();
-        Cursor row = db.rawQuery("SELECT user_id, date, height, weight FROM evaluations", null);
+        Cursor row = db.rawQuery("SELECT user_id, date, height, weight, imc FROM evaluations", null);
         if (row.moveToFirst()) {
             int uid = Integer.parseInt(row.getString(0));
             String date = row.getString(1);
             double estatura = Double.parseDouble(row.getString(2));
             double peso = Double.parseDouble(row.getString(3));
+            double imc = Double.parseDouble(row.getString(4));
             db.close();
-            return new Evaluacion(id, uid, date, peso, estatura);
+            return new Evaluacion(id, uid, date, peso, estatura, imc);
         }
         db.close();
         return null;
@@ -99,6 +103,7 @@ public class EvaluacionDAO implements iCRUD<Evaluacion> {
         registry.put("date", evaluacion.getDate());
         registry.put("height", evaluacion.getEstatura());
         registry.put("weight", evaluacion.getPeso());
+        registry.put("imc", evaluacion.getImc());
         boolean isUpdated = db.update(table, registry, "id = ?", new String[] {Integer.toString(evaluacion.getId())}) > 0;
         db.close();
         return isUpdated;

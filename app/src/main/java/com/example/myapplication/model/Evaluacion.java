@@ -9,13 +9,15 @@ public class Evaluacion implements Serializable {
     private String date;
     private double peso;
     private double estatura;
+    private double imc;
 
-    public Evaluacion(int id, int uid, String date, double peso, double estatura) {
+    public Evaluacion(int id, int uid, String date, double peso, double estatura, double imc) {
         this.id = id;
         this.uid = uid;
         this.date = date;
         this.peso = peso;
         this.estatura = estatura;
+        this.imc = imc;
     }
 
     public int getId() {
@@ -58,12 +60,12 @@ public class Evaluacion implements Serializable {
         this.estatura = estatura;
     }
 
-    public double calcularIMC() {
-        try {
-            return this.peso / (this.estatura * this.estatura);
-        } catch (Exception e) {
-            return 0;
-        }
+    public double getImc() {
+        return imc;
+    }
+
+    public void setImc(double imc) {
+        this.imc = imc;
     }
 
 }

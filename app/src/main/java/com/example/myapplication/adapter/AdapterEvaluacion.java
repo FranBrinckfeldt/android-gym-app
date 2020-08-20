@@ -51,7 +51,7 @@ public class AdapterEvaluacion extends BaseAdapter {
         id.setText(Integer.toString(evaluaciones.get(i).getId()));
         fecha.setText(evaluaciones.get(i).getDate());
         peso.setText(Double.toString(evaluaciones.get(i).getPeso()));
-        imc.setText(String.format("%.1f", evaluaciones.get(i).calcularIMC()));
+        imc.setText(String.format("%.1f", evaluaciones.get(i).getImc()));
 
         return view;
     }

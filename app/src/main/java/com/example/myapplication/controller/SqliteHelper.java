@@ -15,7 +15,7 @@ public class SqliteHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, firstname TEXT NOT NULL, lastname TEXT NOT NULL, birth TEXT NOT NULL, height REAL NOT NULL, password TEXT NOT NULL)");
-        db.execSQL("CREATE TABLE evaluations (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, date DATE NOT NULL, weight REAL NOT NULL, height REAL NOT NULL)");
+        db.execSQL("CREATE TABLE evaluations (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL, date DATE NOT NULL, weight REAL NOT NULL, height REAL NOT NULL, imc REAL NOT NULL)");
     }
 
     @Override

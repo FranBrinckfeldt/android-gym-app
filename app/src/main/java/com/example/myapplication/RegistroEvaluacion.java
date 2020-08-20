@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.example.myapplication.dao.EvaluacionDAO;
 import com.example.myapplication.model.Evaluacion;
 import com.example.myapplication.ui.DatePickerFragment;
+import com.example.myapplication.utils.Imc;
 import com.example.myapplication.utils.Validador;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -28,7 +29,7 @@ public class RegistroEvaluacion extends AppCompatActivity {
     Button btn_save;
     EvaluacionDAO dao;
     SharedPreferences preferences;
-    double estatura;
+    double estatura, imc;
     int uid;
 
     @Override
@@ -62,7 +63,8 @@ public class RegistroEvaluacion extends AppCompatActivity {
                 String strPeso = til_peso.getEditText().getText().toString();
                 if (!strPeso.isEmpty()) {
                     double peso = Double.parseDouble(strPeso);
-                    tv_imc.setText(String.format("%.1f", peso / (estatura * estatura)));
+                    imc = Imc.calcular(peso, estatura);
+                    tv_imc.setText(String.format("%.1f", imc));
                 } else {
                     tv_imc.setText(getString(R.string.ingrese_peso));
                 }
@@ -83,7 +85,7 @@ public class RegistroEvaluacion extends AppCompatActivity {
                     dao = new EvaluacionDAO(view.getContext());
                     String register_date = til_register_date.getEditText().getText().toString();
                     String peso = til_peso.getEditText().getText().toString();
-                    Evaluacion evaluacion = new Evaluacion(0, uid, register_date, Double.parseDouble(peso), estatura);
+                    Evaluacion evaluacion = new Evaluacion(0, uid, register_date, Double.parseDouble(peso), estatura, imc);
                     if(dao.insert(evaluacion)) {
                         Intent intent = new Intent(getBaseContext(), Registros.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
