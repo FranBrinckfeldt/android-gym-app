@@ -105,7 +105,7 @@ public class EditarEvaluacion extends AppCompatActivity {
                 if (validar()) {
                     String register_date = til_register_date.getEditText().getText().toString();
                     String peso = til_peso.getEditText().getText().toString();
-                    Evaluacion evaluacionEditada = new Evaluacion(evaluacion.getId(), 0, register_date, Double.parseDouble(peso), estatura, imc);
+                    Evaluacion evaluacionEditada = new Evaluacion(evaluacion.getId(), uid, register_date, Double.parseDouble(peso), estatura, imc);
                     if(dao.update(evaluacionEditada)){
                         Toast.makeText(view.getContext(), "Se editó evaluación", Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(getBaseContext(), Registros.class);
