@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.myapplication.controller.SqliteHelper;
 import com.example.myapplication.model.Evaluacion;
@@ -64,6 +65,7 @@ public class EvaluacionDAO implements iCRUD<Evaluacion> {
         Cursor rows = db.rawQuery("SELECT id, user_id, date, height, weight, imc FROM evaluations WHERE user_id = ? AND date BETWEEN ? AND ? ORDER BY date ASC", new String[] {Integer.toString(this.preferences.getInt("id", 0)), dates[0], dates[1]});
         ArrayList<Evaluacion> evaluaciones = new ArrayList<>();
         while(rows.moveToNext()) {
+            Log.d("id", rows.getString(0));
             int id = Integer.parseInt(rows.getString(0));
             int uid = Integer.parseInt(rows.getString(1));
             String date = rows.getString(2);

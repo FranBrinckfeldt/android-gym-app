@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -55,9 +56,15 @@ public class Registros extends AppCompatActivity {
             til_fecha_inicio.getEditText().setText(fechas[0]);
             til_fecha_termino.getEditText().setText(fechas[1]);
             btn_eliminar_filtro.setVisibility(View.VISIBLE);
+            ViewGroup.LayoutParams params = lv_evaluaciones.getLayoutParams();
+            params.height = 420;
+            lv_evaluaciones.setLayoutParams(params);
         } else {
             adapter = new AdapterEvaluacion(getBaseContext(), dao.findAll());
             btn_eliminar_filtro.setVisibility(View.GONE);
+            ViewGroup.LayoutParams params = lv_evaluaciones.getLayoutParams();
+            params.height = 640;
+            lv_evaluaciones.setLayoutParams(params);
         }
 
         lv_evaluaciones.setAdapter(adapter);
