@@ -10,15 +10,17 @@ import android.widget.TextView;
 import com.example.myapplication.R;
 import com.example.myapplication.RegistroEvaluacion;
 import com.example.myapplication.model.Evaluacion;
+import com.example.myapplication.model.IEvaluacion;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AdapterEvaluacion extends BaseAdapter {
 
     private Context context;
-    private ArrayList<Evaluacion> evaluaciones;
+    private List<IEvaluacion> evaluaciones;
 
-    public AdapterEvaluacion(Context context, ArrayList<Evaluacion> evaluaciones) {
+    public AdapterEvaluacion(Context context, List<IEvaluacion> evaluaciones) {
         this.context = context;
         this.evaluaciones = evaluaciones;
     }
@@ -29,7 +31,7 @@ public class AdapterEvaluacion extends BaseAdapter {
     }
 
     @Override
-    public Evaluacion getItem(int i) {
+    public IEvaluacion getItem(int i) {
         return evaluaciones.get(i);
     }
 

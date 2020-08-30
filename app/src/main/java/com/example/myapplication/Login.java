@@ -51,7 +51,7 @@ public class Login extends AppCompatActivity {
 
         preferences = getSharedPreferences("usuario", Context.MODE_PRIVATE);
 
-        if (preferences.contains("username")) {
+        if (preferences.contains("token")) {
             Intent intent = new Intent(getBaseContext(), Menu.class);
             startActivity(intent);
             finish();
