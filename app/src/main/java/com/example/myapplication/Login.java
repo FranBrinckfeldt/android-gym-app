@@ -78,6 +78,7 @@ public class Login extends AppCompatActivity {
                                 SharedPreferences.Editor editor = preferences.edit();
                                 editor.putInt("id", id);
                                 editor.putString("height", Double.toString(height));
+                                editor.putString("token", token);
                                 editor.commit();
                                 Intent intent = new Intent(getBaseContext(), Menu.class);
                                 startActivity(intent);
