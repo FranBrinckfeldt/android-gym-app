@@ -18,7 +18,7 @@ public class RetrofitClient {
                     .readTimeout(30, TimeUnit.SECONDS)
                     .build();
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://10.0.2.2:5000")
+                    .baseUrl("http://3.128.34.71:5000")
                     .client(client)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
