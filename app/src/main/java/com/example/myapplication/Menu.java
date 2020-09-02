@@ -53,9 +53,7 @@ public class Menu extends AppCompatActivity {
             public void onClick(View view) {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.remove("id");
-                editor.remove("username");
-                editor.remove("firstname");
-                editor.remove("lastname");
+                editor.remove("token");
                 editor.remove("height");
                 editor.commit();
                 Intent intent = new Intent(getBaseContext(), Login.class);

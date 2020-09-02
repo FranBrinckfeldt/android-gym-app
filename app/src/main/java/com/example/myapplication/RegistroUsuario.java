@@ -11,12 +11,23 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.controller.RetrofitClient;
 import com.example.myapplication.dao.EvaluacionDAO;
 import com.example.myapplication.dao.UsuarioDAO;
+import com.example.myapplication.dto.AccessTokenDTO;
+import com.example.myapplication.dto.LoginDTO;
+import com.example.myapplication.dto.ResponseDTO;
+import com.example.myapplication.dto.UsuarioDTO;
 import com.example.myapplication.model.Usuario;
+import com.example.myapplication.services.UsuarioService;
 import com.example.myapplication.ui.DatePickerFragment;
 import com.example.myapplication.utils.Validador;
 import com.google.android.material.textfield.TextInputLayout;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class RegistroUsuario extends AppCompatActivity {
 
@@ -24,6 +35,7 @@ public class RegistroUsuario extends AppCompatActivity {
     TextInputLayout til_user, til_name, til_lastname, til_date, til_estatura, til_password;
     Button btn_signin;
     UsuarioDAO dao;
+    Retrofit retrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +63,8 @@ public class RegistroUsuario extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (validar()) {
+                    retrofit = RetrofitClient.getRetrofitInstance();
+                    UsuarioService service = retrofit.create(UsuarioService.class);
                     dao = new UsuarioDAO(view.getContext());
                     String user = til_user.getEditText().getText().toString();
                     String name = til_name.getEditText().getText().toString();
@@ -58,16 +72,28 @@ public class RegistroUsuario extends AppCompatActivity {
                     String date = til_date.getEditText().getText().toString();
                     String estatura = til_estatura.getEditText().getText().toString();
                     String password = til_password.getEditText().getText().toString();
-                    Usuario usuario = new Usuario(0, user, name, lastname, date, Double.parseDouble(estatura)).withClave(password);
-                    if (dao.insert(usuario)) {
-                        Intent intent = new Intent(getBaseContext(), Login.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
-                        Toast.makeText(view.getContext(), "Se insertó el usuario", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(view.getContext(), "Hubo un error al insertar en la base de datos", Toast.LENGTH_SHORT).show();
-                    }
+                    UsuarioDTO usuario = (UsuarioDTO) new UsuarioDTO(user, name, lastname, date, Double.parseDouble(estatura)).withClave(password);
+                    Call<ResponseDTO> call = service.register(usuario);
+                    call.enqueue(new Callback<ResponseDTO>() {
+                        @Override
+                        public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                            if (response.isSuccessful()) {
+                                dao.insert(usuario);
+                                Intent intent = new Intent(getBaseContext(), Login.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                finish();
+                                Toast.makeText(view.getContext(), "Se insertó el usuario", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(view.getContext(), "Hubo un error al insertar en la base de datos", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseDTO> call, Throwable t) {
+                            Toast.makeText(view.getContext(), "Hubo un error al conectarse con el servicio", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });

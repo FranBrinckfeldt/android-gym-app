@@ -9,18 +9,33 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.myapplication.controller.RetrofitClient;
 import com.example.myapplication.dao.EvaluacionDAO;
+import com.example.myapplication.dto.AccessTokenDTO;
+import com.example.myapplication.dto.EvaluacionDTO;
+import com.example.myapplication.dto.LoginDTO;
+import com.example.myapplication.dto.ResponseDTO;
 import com.example.myapplication.model.Evaluacion;
+import com.example.myapplication.services.EvaluacionService;
+import com.example.myapplication.services.UsuarioService;
 import com.example.myapplication.ui.DatePickerFragment;
+import com.example.myapplication.utils.BearerToken;
 import com.example.myapplication.utils.Imc;
+import com.example.myapplication.utils.LogOut;
 import com.example.myapplication.utils.Validador;
 import com.google.android.material.textfield.TextInputLayout;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class RegistroEvaluacion extends AppCompatActivity {
 
@@ -31,6 +46,8 @@ public class RegistroEvaluacion extends AppCompatActivity {
     SharedPreferences preferences;
     double estatura, imc;
     int uid;
+    String token;
+    Retrofit retrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +63,8 @@ public class RegistroEvaluacion extends AppCompatActivity {
 
         estatura = Double.parseDouble(preferences.getString("height", "1.0"));
         uid = preferences.getInt("id", 0);
+
+        token = preferences.getString("token", "");
 
         til_peso.getEditText().addTextChangedListener(new TextWatcher() {
             @Override
@@ -86,15 +105,34 @@ public class RegistroEvaluacion extends AppCompatActivity {
                     String register_date = til_register_date.getEditText().getText().toString();
                     String peso = til_peso.getEditText().getText().toString();
                     Evaluacion evaluacion = new Evaluacion(0, uid, register_date, Double.parseDouble(peso), estatura, imc);
-                    if(dao.insert(evaluacion)) {
-                        Intent intent = new Intent(getBaseContext(), Registros.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        finish();
-                        Toast.makeText(view.getContext(), "Se insertó evaluación", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(view.getContext(), "Hubo un error al insertar en la base de datos", Toast.LENGTH_SHORT).show();
-                    }
+                    retrofit = RetrofitClient.getRetrofitInstance();
+                    EvaluacionService service = retrofit.create(EvaluacionService.class);
+                    Call<ResponseDTO> call = service.post(new EvaluacionDTO(evaluacion), BearerToken.get(token));
+                    call.enqueue(new Callback<ResponseDTO>() {
+                        @Override
+                        public void onResponse(Call<ResponseDTO> call, Response<ResponseDTO> response) {
+                            if (response.isSuccessful()) {
+                                if(dao.insert(evaluacion)) {
+                                    Intent intent = new Intent(getBaseContext(), Registros.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                    finish();
+                                    Toast.makeText(view.getContext(), "Se insertó evaluación", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(view.getContext(), "Hubo un error al insertar en la base de datos", Toast.LENGTH_SHORT).show();
+                                }
+                            } else if (response.code() == 403) {
+                                LogOut.exec(getBaseContext(), preferences, null);
+                            } else {
+                                Toast.makeText(view.getContext(), "Hubo un error al insertar en la base de datos en el servidor", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseDTO> call, Throwable t) {
+                            Toast.makeText(view.getContext(), "Hubo un error al conectarse al servicio", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });

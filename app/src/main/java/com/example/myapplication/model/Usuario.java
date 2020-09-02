@@ -19,6 +19,22 @@ public class Usuario {
         this.estatura = estatura;
     }
 
+    public Usuario(String usuario, String nombre, String apellido, String fechaNacimiento, double estatura) {
+        this.usuario = usuario;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.fechaNacimiento = fechaNacimiento;
+        this.estatura = estatura;
+    }
+
+    public Usuario() {
+    }
+
+    public Usuario withId(int id) {
+        this.id = id;
+        return this;
+    }
+
     public Usuario withClave(String clave) {
         this.clave = clave;
         return this;

@@ -6,15 +6,26 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.auth0.android.jwt.JWT;
+import com.example.myapplication.controller.RetrofitClient;
 import com.example.myapplication.dao.UsuarioDAO;
+import com.example.myapplication.dto.AccessTokenDTO;
+import com.example.myapplication.dto.LoginDTO;
 import com.example.myapplication.model.Usuario;
+import com.example.myapplication.services.UsuarioService;
 import com.example.myapplication.utils.Validador;
 import com.google.android.material.textfield.TextInputLayout;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class Login extends AppCompatActivity {
 
@@ -24,6 +35,7 @@ public class Login extends AppCompatActivity {
     UsuarioDAO dao;
     Usuario usuario;
     SharedPreferences preferences;
+    Retrofit retrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +51,7 @@ public class Login extends AppCompatActivity {
 
         preferences = getSharedPreferences("usuario", Context.MODE_PRIVATE);
 
-        if (preferences.contains("username")) {
+        if (preferences.contains("token")) {
             Intent intent = new Intent(getBaseContext(), Menu.class);
             startActivity(intent);
             finish();
@@ -52,22 +64,37 @@ public class Login extends AppCompatActivity {
                     String user = til_user.getEditText().getText().toString();
                     String password = til_password.getEditText().getText().toString();
                     dao = new UsuarioDAO(view.getContext());
-                    usuario = dao.login(user, password);
-                    if (usuario != null) {
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putInt("id", usuario.getId());
-                        editor.putString("username", usuario.getUsuario());
-                        editor.putString("firstname", usuario.getNombre());
-                        editor.putString("lastname", usuario.getApellido());
-                        editor.putString("height", Double.toString(usuario.getEstatura()));
-                        editor.commit();
-                        Intent intent = new Intent(getBaseContext(), Menu.class);
-                        startActivity(intent);
-                        finish();
-                        Toast.makeText(view.getContext(), "Bienvenido/a " + usuario.getNombre(), Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(view.getContext(), "Usuario o contraseña incorrectos ", Toast.LENGTH_SHORT).show();
-                    }
+                    retrofit = RetrofitClient.getRetrofitInstance();
+                    UsuarioService service = retrofit.create(UsuarioService.class);
+                    Call<AccessTokenDTO> call = service.login(new LoginDTO(user, password));
+                    call.enqueue(new Callback<AccessTokenDTO>() {
+                        @Override
+                        public void onResponse(Call<AccessTokenDTO> call, Response<AccessTokenDTO> response) {
+                            if (response.isSuccessful()) {
+                                String token = response.body().getAccessToken();
+                                JWT decodedToken = new JWT(token);
+                                int id = Integer.parseInt(decodedToken.getSubject());
+                                double height = decodedToken.getClaim("height").asDouble();
+                                SharedPreferences.Editor editor = preferences.edit();
+                                editor.putInt("id", id);
+                                editor.putString("height", Double.toString(height));
+                                editor.putString("token", token);
+                                editor.commit();
+                                Intent intent = new Intent(getBaseContext(), Menu.class);
+                                startActivity(intent);
+                                finish();
+                                Toast.makeText(view.getContext(), "Bienvenido/a", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(view.getContext(), "Usuario o contraseña incorrectos", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<AccessTokenDTO> call, Throwable t) {
+                            Log.d("retrofit", "falló");
+                            Toast.makeText(view.getContext(), "Falló la conexión con el servicio", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
